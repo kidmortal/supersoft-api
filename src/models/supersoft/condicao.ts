@@ -1,4 +1,4 @@
 export type SSCondicao = {
-  CODIGO: number;
-  DESCRICAO: string;
+  CODIGO?: number;
+  DESCRICAO?: string;
 };
