@@ -10,8 +10,6 @@
     "update": "git fetch --all && git reset --hard origin/master "
   },
   "dependencies": {
-    "@types/firebird": "^0.1.5",
-    "@types/yesql": "^4.1.0",
     "axios": "^0.21.1",
     "dotenv": "^9.0.0",
     "express": "^4.17.1",
@@ -24,6 +22,8 @@
     "@types/axios": "^0.14.0",
     "@types/express": "^4.17.11",
     "@types/mongodb": "^3.6.12",
-    "@types/node": "^15.0.2"
+    "@types/node": "^15.0.2",
+    "@types/firebird": "^0.1.5",
+    "@types/yesql": "^4.1.0"
   }
 }

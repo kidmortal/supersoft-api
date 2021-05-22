@@ -1,5 +1,6 @@
-import { PedidosController } from "../database/firebird";
 import FireBird from "firebird";
+import { MercosController } from "../controllers/mercos";
+import { PedidosController } from "../controllers/pedidos";
 
 function checkKey(req, res) {
   let { key } = req.query;
@@ -15,9 +16,9 @@ function checkKey(req, res) {
 async function GetDatabase(): Promise<FireBird.Connection> {
   const DB = FireBird.createConnection();
   DB.connectSync(
-    "C:/Users/User/Desktop/database/SUPERSOFT.FDB",
-    "sysdba",
-    "masterkey",
+    process.env.DB_PATH,
+    process.env.DB_USER,
+    process.env.DB_PWD,
     ""
   );
   return DB;
@@ -27,5 +28,8 @@ export async function configRoutes(app) {
   let DB = await GetDatabase();
   app.get("/pedidos", async (req, res) => {
     PedidosController(req, res, DB);
+  });
+  app.post("/mercos", async (req, res) => {
+    MercosController(req, res, DB);
   });
 }
