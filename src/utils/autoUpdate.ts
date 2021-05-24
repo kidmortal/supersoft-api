@@ -26,5 +26,5 @@ export async function AutoUpdateFromGithub(req: Request, res: Response) {
       console.log(`stdout: ${stdout}`);
     }
   );
-  return res.status(200).json({ message: `Iniciando update do codigo` });
+  return res.status(200).json({ message: `Updating code` });
 }
