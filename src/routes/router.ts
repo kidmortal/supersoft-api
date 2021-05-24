@@ -1,6 +1,9 @@
+import { exec } from "child_process";
+import { Request, Response } from "express";
 import FireBird from "firebird";
 import { MercosController } from "../controllers/mercos";
 import { PedidosController } from "../controllers/pedidos";
+import { AutoUpdateFromGithub } from "../utils/autoUpdate";
 
 function checkKey(req, res) {
   let { key } = req.query;
@@ -26,10 +29,16 @@ async function GetDatabase(): Promise<FireBird.Connection> {
 
 export async function configRoutes(app) {
   let DB = await GetDatabase();
+  app.get("/", async (req: Request, res: Response) => {
+    res.status(200).json({ message: "isso ae" });
+  });
   app.get("/pedidos", async (req, res) => {
     PedidosController(req, res, DB);
   });
   app.post("/mercos", async (req, res) => {
     MercosController(req, res, DB);
+  });
+  app.post("/github", async (req, res) => {
+    AutoUpdateFromGithub(req, res);
   });
 }
