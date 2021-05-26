@@ -1,5 +1,4 @@
 import FireBird from "firebird";
-import { erro } from "../models/misc/erro";
 import { SSCliente } from "../models/supersoft/cliente";
 import { SSCondicao } from "../models/supersoft/condicao";
 import { SSProduto } from "../models/supersoft/produto";
@@ -7,20 +6,22 @@ import { SSTransportadora } from "../models/supersoft/transportadora";
 import { SSVendedor } from "../models/supersoft/vendedor";
 import { HandleResponse, ParseSql } from "./utils";
 
-async function BindProdutosToPedido(pedido, DB) {
-  let pedidoNumero = parseInt(pedido.NUMPEDIDO);
-  pedido.PRODUTOS = await this.FetchProdutosFromPedidoByNumero(
-    pedidoNumero,
-    DB
-  );
-  return pedido;
-}
-
 class FirebirdClass {
+  async BindProdutosToPedido(pedido, DB) {
+    let pedidoNumero = parseInt(pedido.NUMPEDIDO);
+    pedido.PRODUTOS = await this.FetchProdutosFromPedidoByNumero(
+      pedidoNumero,
+      DB
+    );
+    return pedido;
+  }
+
   async FetchPedidoByNumero(numero, DB: FireBird.Connection) {
     let parsed = ParseSql("FetchPedidoByNumero", { numero });
-    let pedido = await HandleResponse(parsed, DB);
-    pedido = await BindProdutosToPedido(pedido, DB);
+    let pedidos = await HandleResponse(parsed, DB);
+    let pedido = pedidos[0];
+    if (!pedido) return { error: `Nao ha pedidos para o numero ${numero}` };
+    pedido = await this.BindProdutosToPedido(pedido, DB);
     return pedido;
   }
   async FetchPedidoByCliente(cnpj, DB: FireBird.Connection) {
@@ -29,7 +30,7 @@ class FirebirdClass {
     let pedidos = await HandleResponse(parsed, DB);
     for (let index = 0; index < pedidos.length; index++) {
       let pedido = pedidos[index];
-      pedido = await BindProdutosToPedido(pedido, DB);
+      pedido = await this.BindProdutosToPedido(pedido, DB);
     }
     return pedidos;
   }

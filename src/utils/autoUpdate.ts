@@ -11,7 +11,6 @@ export async function AutoUpdateFromGithub(req: Request, res: Response) {
     from: hook?.before,
     to: hook?.after,
   });
-  console.log(``);
   exec(
     "git pull && tsc && pm2 restart SUPERSOFT-API",
     (error, stdout, stderr) => {

@@ -5,10 +5,10 @@
   "license": "MIT",
   "scripts": {
     "start": "node dist/index.js",
-    "server": "tsc && pm2 restart SUPERSOFT-API",
+    "server": "tsc && pm2 delete SUPERSOFT-API & pm2 start dist/index.js --name SUPERSOFT-API",
     "build": "tsc",
     "dev": "ts-node-dev src/index.ts",
-    "update": "git fetch --all && git reset --hard origin/master "
+    "update": "git pull && tsc && pm2 stop SUPERSOFT-API"
   },
   "dependencies": {
     "axios": "^0.21.1",
