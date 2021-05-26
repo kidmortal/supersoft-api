@@ -19,7 +19,7 @@ function checkKey(req, res) {
 async function GetDatabase(): Promise<FireBird.Connection> {
   const DB = FireBird.createConnection();
   DB.connectSync(
-    process.env.DB_PATH,
+    `${process.cwd()}\\${process.env.DB_NAME}`,
     process.env.DB_USER,
     process.env.DB_PWD,
     ""
