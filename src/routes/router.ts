@@ -32,7 +32,13 @@ export async function configRoutes(app) {
   app.get("/", async (req: Request, res: Response) => {
     res.status(200).json({ message: "isso ae" });
   });
+  app.post("/pedidos", async (req, res) => {
+    PedidosController(req, res, DB);
+  });
   app.get("/pedidos", async (req, res) => {
+    PedidosController(req, res, DB);
+  });
+  app.get("/pedidos/:id", async (req, res) => {
     PedidosController(req, res, DB);
   });
   app.post("/mercos", async (req, res) => {

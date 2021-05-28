@@ -1,4 +1,5 @@
 import FireBird from "firebird";
+import { SSPedido } from "../models/supersoft/pedido";
 const sql = require("yesql")("src/database", { type: "mysql" });
 
 type ParseParams = {
@@ -13,13 +14,17 @@ export function ObjectToNestedObject(obj: object) {
     let keyValue = obj[key];
     if (key.includes(".")) {
       let split = key.split(".");
-      nestedObject[split[0]] = {};
+      if (!nestedObject[split[0]]) nestedObject[split[0]] = {};
       nestedObject[split[0]][split[1]] = keyValue;
     } else {
       nestedObject[key] = keyValue;
     }
   });
   return nestedObject;
+}
+
+export function PedidoItemsToArray(pedidos: []) {
+  pedidos.forEach((pedido) => {});
 }
 
 export function ArrayToNested(array: object[]) {
@@ -30,6 +35,24 @@ export function ArrayToNested(array: object[]) {
   });
 
   return nestedArray;
+}
+
+export function NestPedidos(array: SSPedido[]) {
+  let nestedPedidos = {};
+  array.forEach((pedido) => {
+    let num = parseInt(pedido.NUMPEDIDO);
+    if (!nestedPedidos[num]) {
+      nestedPedidos[num] = { ...pedido };
+      let nested: SSPedido = nestedPedidos[num];
+      nested.ITEMS = [{ ...nested.ITEM }];
+      delete nested.ITEM;
+    }
+    if (nestedPedidos[num]) {
+      let nested: SSPedido = nestedPedidos[num];
+      nested.ITEMS.push(pedido.ITEM);
+    }
+  });
+  return nestedPedidos;
 }
 
 export function ParseSql(query: string, params: {}) {
