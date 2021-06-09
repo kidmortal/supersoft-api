@@ -3,6 +3,8 @@ import { Request, Response } from "express";
 import FireBird from "firebird";
 import { MercosController } from "../controllers/mercos";
 import { PedidosController } from "../controllers/pedidos";
+import { ProdutosController } from "../controllers/produtos";
+import { RecibosController } from "../controllers/recibos";
 import { AutoUpdateFromGithub } from "../utils/autoUpdate";
 
 function checkKey(req, res) {
@@ -40,6 +42,18 @@ export async function configRoutes(app) {
   });
   app.get("/pedidos/:id", async (req, res) => {
     PedidosController(req, res, DB);
+  });
+  app.get("/recibos", async (req, res) => {
+    RecibosController(req, res, DB);
+  });
+  app.get("/recibos/:id", async (req, res) => {
+    RecibosController(req, res, DB);
+  });
+  app.get("/produtos", async (req, res) => {
+    ProdutosController(req, res, DB);
+  });
+  app.get("/produtos/:id", async (req, res) => {
+    ProdutosController(req, res, DB);
   });
   app.post("/mercos", async (req, res) => {
     MercosController(req, res, DB);

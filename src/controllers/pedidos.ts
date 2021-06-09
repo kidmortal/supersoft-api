@@ -13,15 +13,16 @@ export type ParseSqlPedidoParams = {
 export async function PedidosController(req: Request, res: Response, DB) {
   let { params } = req.body;
   let { id } = req.params;
-  if (params)
-    return res
-      .status(200)
-      .json(await FireBirdDB.FetchPedidoByParams(params, DB));
 
   if (id)
     return res
       .status(200)
       .json(await FireBirdDB.FetchPedidoByParams({ numero: parseInt(id) }, DB));
+
+  if (params)
+    return res
+      .status(200)
+      .json(await FireBirdDB.FetchPedidoByParams(params, DB));
 
   if (req.method === "GET")
     return res.status(200).json(await FireBirdDB.FetchPedidoByParams({}, DB));

@@ -4,9 +4,10 @@ import { SSCondicao } from "../models/supersoft/condicao";
 import { SSProduto } from "../models/supersoft/produto";
 import { SSTransportadora } from "../models/supersoft/transportadora";
 import { SSVendedor } from "../models/supersoft/vendedor";
-import { HandleResponse, NestPedidos, ParseSql } from "./utils";
+import { HandleResponse, ParseSql } from "./utils";
 import { GetTodayDateString, ParseDateToUS } from "../utils/functions";
 import { ParseSqlPedidoParams } from "../controllers/pedidos";
+import { SSPedido } from "../models/supersoft/pedido";
 
 class FirebirdClass {
   async ParseSqlPedido(filters: ParseSqlPedidoParams, DB) {
@@ -21,8 +22,8 @@ class FirebirdClass {
         console.log(data);
         if (data.length > 0) cnpj = data[0].NUMERO;
       }
-      numero && filterArray.push(`NUMPEDIDO = ${numero}`);
-      cnpj && filterArray.push(`NUMEROCLI = '${cnpj}'`);
+      numero && filterArray.push(`PEDIDOS.NUMPEDIDO = ${numero}`);
+      cnpj && filterArray.push(`PEDIDOS.NUMEROCLI = '${cnpj}'`);
       dataInicio &&
         filterArray.push(
           `DATAEMISSAO BETWEEN '${ParseDateToUS(dataInicio)}' AND '${
@@ -48,8 +49,26 @@ class FirebirdClass {
         error: `Nao ha pedidos para os parametros selecionados`,
         params,
       };
-    let nest = NestPedidos(pedidos);
+    let nest = this.NestPedidos(pedidos);
     return nest;
+  }
+
+  NestPedidos(array: SSPedido[]) {
+    let nestedPedidos = {};
+    array.forEach((pedido) => {
+      let num = parseInt(pedido.NUMPEDIDO);
+      if (!nestedPedidos[num]) {
+        nestedPedidos[num] = { ...pedido };
+        let nested: SSPedido = nestedPedidos[num];
+        nested.ITEMS = [{ ...nested.ITEM }];
+        delete nested.ITEM;
+      }
+      if (nestedPedidos[num]) {
+        let nested: SSPedido = nestedPedidos[num];
+        nested.ITEMS.push(pedido.ITEM);
+      }
+    });
+    return nestedPedidos;
   }
 
   async FetchProdutoByCodigo(codigo, DB: FireBird.Connection) {
@@ -57,6 +76,7 @@ class FirebirdClass {
       CODIGO: codigo,
       DESCRICAO: `Produto nao cadastrado`,
     };
+    if (isNaN(codigo)) codigo = `'${codigo}'`;
     let parsed = ParseSql("FetchProdutoByCodigo", { codigo });
     let response = await DB.querySync(parsed);
     let data = await response.fetchSync<SSProduto>(1, true);

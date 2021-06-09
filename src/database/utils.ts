@@ -37,24 +37,6 @@ export function ArrayToNested(array: object[]) {
   return nestedArray;
 }
 
-export function NestPedidos(array: SSPedido[]) {
-  let nestedPedidos = {};
-  array.forEach((pedido) => {
-    let num = parseInt(pedido.NUMPEDIDO);
-    if (!nestedPedidos[num]) {
-      nestedPedidos[num] = { ...pedido };
-      let nested: SSPedido = nestedPedidos[num];
-      nested.ITEMS = [{ ...nested.ITEM }];
-      delete nested.ITEM;
-    }
-    if (nestedPedidos[num]) {
-      let nested: SSPedido = nestedPedidos[num];
-      nested.ITEMS.push(pedido.ITEM);
-    }
-  });
-  return nestedPedidos;
-}
-
 export function ParseSql(query: string, params: {}) {
   let parseParams: ParseParams = sql[query]?.(params);
   parseParams.sql = parseParams.sql.replace(`-- ${query}\n`, "");
